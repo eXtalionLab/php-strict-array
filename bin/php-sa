@@ -1,0 +1,29 @@
+#!/usr/bin/env php
+<?php
+declare(strict_types=1);
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use eXtalion\PhpStrictArray\Command\StrictArrayGenerator as SAG_Command;
+use eXtalion\PhpStrictArray\Service\FileSystem;
+use eXtalion\PhpStrictArray\Service\StrictArrayGenerator as SAG_Service;
+use eXtalion\PhpStrictArray\Template;
+use Symfony\Component\Console\Application;
+
+$command = new SAG_Command(
+    new SAG_Service(
+        new Template\Twig(
+            new \Twig\Environment(
+                new \Twig\Loader\FilesystemLoader(__DIR__ . '/../templates'),
+                []
+            )
+        )
+    ),
+    new FileSystem()
+);
+
+$app = new Application();
+$app->add($command);
+$app->setDefaultCommand($command->getName(), true);
+
+$app->run();

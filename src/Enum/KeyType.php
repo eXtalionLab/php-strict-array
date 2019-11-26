@@ -6,13 +6,13 @@ namespace eXtalion\PhpStrictArray\Enum;
 /**
  * @author Damian Glinkowski <damian@d0niek.pl>
  *
- * @method static ArrayTypes map()
- * @method static ArrayTypes vector()
+ * @method static KeyType int()
+ * @method static KeyType string()
  */
-final class ArrayTypes extends \Enum
+final class KeyType extends \Enum
 {
     const VALUES = [
-        'map' => 'map',
-        'vector' => 'vector'
+        'int' => 'int',
+        'string' => 'string'
     ];
 }

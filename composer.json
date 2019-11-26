@@ -20,6 +20,18 @@
         }
     ],
     "autoload": {
+        "classmap": [
+            "arrays/"
+        ],
+        "files": [
+            "functions/sarray_filter.php",
+            "functions/sarray_key_exists.php",
+            "functions/sarray_keys.php",
+            "functions/sarray_search.php",
+            "functions/sarray_values.php",
+            "Pair.php",
+            "StrictArray.php"
+        ],
         "psr-4": {
             "eXtalion\\PhpStrictArray\\": "src/"
         }

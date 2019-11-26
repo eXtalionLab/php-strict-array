@@ -1,0 +1,193 @@
+<?php
+declare(strict_types=1);
+
+/**
+ * What are you doing here !?!?
+
+ * This file is for php engine not for humans!
+
+ * Goto templates/strict_array.php.twig
+ */
+
+{% set key = array.key %}
+
+{% if array.objectDefinition %}
+    {% set value = array.objectDefinition.alias %}
+
+    use {{ array.objectDefinition.name }} as {{ array.objectDefinition.alias }};
+{% else %}
+    {% set value = array.value %}
+{% endif %}
+
+final class {{ array.computerName }} implements \StrictArray
+{
+    private $data;
+
+    {% if array.isMap %}
+        public function __construct(\Pair ...$data)
+        {
+            $keys = [];
+            $values = [];
+            $uniqueData = [];
+
+            foreach ($data as $pair) {
+                $key = $this->hash($pair->first());
+
+                $uniqueData[$key] = $pair;
+                $keys[$key] = $pair->first();
+                $values[$key] = $pair->second();
+            }
+
+            {{ validate_key(key, '...\\array_values($keys)')|raw }}
+            {{ validate_value(value, '...\\array_values($values)')|raw }}
+
+            $this->data = $uniqueData;
+        }
+    {% else %}
+        public function __construct({{ value }} ...$data)
+        {
+            $this->data = $data;
+        }
+    {% endif %}
+
+    public function offsetExists($offset): bool
+    {
+        {{ validate_key(key, '$offset')|raw }}
+
+        {% if array.isMap %}
+            return isset($this->data[$this->hash($offset)]);
+        {% else %}
+            return isset($this->data[$offset]);
+        {% endif %}
+    }
+
+    public function offsetGet($offset): ?{{ value }}
+    {
+        {{ validate_key(key, '$offset')|raw }}
+
+        {% if array.isMap %}
+            $key = $this->hash($offset);
+
+            if ($this->data[$key]) {
+                return $this->data[$key]->second();
+            }
+
+            return null;
+        {% else %}
+            return $this->data[$offset];
+        {% endif %}
+    }
+
+    public function offsetSet($offset, $value): void
+    {
+        {% if array.isMap %}
+            if ($offset === null) {
+                if ($value instanceof \Pair) {
+                    {{ validate_key(key, '$value->first()')|raw }}
+                    {{ validate_value(value, '$value->second()')|raw }}
+
+                    $this->data[$this->hash($value->first())] = $value;
+
+                    return;
+                }
+
+                throw new \TypeError(\sprintf(
+                    'Argument 2 passed to %s must be an instance of %s, %s given',
+                    __METHOD__,
+                    \Paid::class,
+                    \gettype($value)
+                ));
+            } else {
+                {{ validate_key(key, '$offset')|raw }}
+                {{ validate_value(value, '$value')|raw }}
+
+                $this->data[$this->hash($offset)] = new \Pair($offset, $value);
+            }
+        {% else %}
+            if ($offset === null) {
+                {{ validate_value(value, '$value')|raw }}
+
+                $this->data[] = $value;
+            } else {
+                {{ validate_key(key, '$offset')|raw }}
+                {{ validate_value(value, '$value')|raw }}
+
+                $this->data[$offset] = $value;
+            }
+        {% endif %}
+    }
+
+    public function offsetUnset($offset): void
+    {
+        {{ validate_key(key, '$offset')|raw }}
+
+        {% if array.isMap %}
+            unset($this->data[$this->hash($offset)]);
+        {% else %}
+            unset($this->data[$offset]);
+        {% endif %}
+    }
+
+    public function count(): int
+    {
+        return \count($this->data);
+    }
+
+    public function current(): ?{{ value }}
+    {
+        {% if array.isMap %}
+            return $this->valid() ? \current($this->data)->second() : null;
+        {% else %}
+            return $this->valid() ? \current($this->data) : null;
+        {% endif %}
+    }
+
+    public function key(): ?{{ key }}
+    {
+        {% if array.isMap %}
+            return $this->valid() ? \current($this->data)->first() : null;
+        {% else %}
+            return \key($this->data);
+        {% endif %}
+    }
+
+    public function next(): void
+    {
+        \next($this->data);
+    }
+
+    public function rewind(): void
+    {
+        \reset($this->data);
+    }
+
+    public function valid(): bool
+    {
+        return \key($this->data) !== null;
+    }
+
+    public function jsonSerialize(): array
+    {
+        {% if array.isMap %}
+            return \array_values($this->data);
+        {% else %}
+            return $this->data;
+        {% endif %}
+    }
+
+    public function __debugInfo(): array
+    {
+        {% if array.isMap %}
+            return \array_values($this->data);
+        {% else %}
+            return $this->data;
+        {% endif %}
+    }
+
+    {% if array.isMap %}
+        private function hash($key): string
+        {
+            return \md5(\var_export($key, true));
+        }
+    {% endif %}
+}

@@ -3,10 +3,13 @@ declare(strict_types=1);
 
 namespace eXtalion\PhpStrictArray\Command;
 
-use eXtalion\PhpStrictArray\DTO;
+use eXtalion\PhpStrictArray\DTO\ArrayDefinition;
+use eXtalion\PhpStrictArray\DTO\ObjectDefinition;
 use eXtalion\PhpStrictArray\Enum;
-use eXtalion\PhpStrictArray\Service;
+use eXtalion\PhpStrictArray\Service\FileSystem;
+use eXtalion\PhpStrictArray\Service\StrictArrayGenerator as StrictArrayGeneratorService;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question;
@@ -23,27 +26,69 @@ final class StrictArrayGenerator extends Command
     private $_arrayGenerator;
 
     /**
-     * @var \eXtalion\PhpStrictArray\DTO\StrictArrayDefinition
+     * @var \eXtalion\PhpStrictArray\Service\FileSystem
+     */
+    private $_fileSystem;
+
+    /**
+     * @var \eXtalion\PhpStrictArray\DTO\ArrayDefinition
      */
     private $_arrayDefinition;
 
     /**
      * @param \eXtalion\PhpStrictArray\Service\StrictArrayGenerator $arrayGenerator
+     * @param \eXtalion\PhpStrictArray\Service\FileSystem $fileSystem
      */
-    public function __construct(Service\StrictArrayGenerator $arrayGenerator)
-    {
+    public function __construct(
+        StrictArrayGeneratorService $arrayGenerator,
+        FileSystem $fileSystem
+    ) {
         parent::__construct();
 
         $this->_arrayGenerator = $arrayGenerator;
-        $this->_arrayDefinition = new DTO\StrictArrayDefinition();
+        $this->_fileSystem = $fileSystem;
+        $this->_arrayDefinition = new ArrayDefinition();
     }
 
     protected function configure(): void
     {
         $this
-            ->setName('php-strict-array:generate-strict-array')
+            ->setName('php-sa')
             ->setDescription('Generate strict array')
-            ->setProcessTitle('php-strict-array');
+            ->setHelp('This command allows you to create a strict array')
+            ->setProcessTitle('php-strict-array')
+            //
+            ->addArgument(
+                'directory',
+                InputArgument::OPTIONAL,
+                "Directory where strict array will be save.\n"
+                .'When omit strict array code will be output to STDOUT'
+            );
+    }
+
+    protected function initialize(
+        InputInterface $input,
+        OutputInterface $output
+    ): void {
+        $directory = $input->getArgument('directory');
+
+        if ($directory) {
+            if (!\file_exists($directory)) {
+                \mkdir($directory, 0777, true);
+            }
+
+            if (!\is_dir($directory)) {
+                throw new \RuntimeException(
+                    "\"{$directory}\" is a file, expect directory"
+                );
+            }
+
+            if (!\is_writable($directory)) {
+                throw new \RuntimeException(
+                    "Directory \"{$directory}\" is not writable"
+                );
+            }
+        }
     }
 
     protected function interact(
@@ -51,50 +96,41 @@ final class StrictArrayGenerator extends Command
         OutputInterface $output
     ): void {
         $io = new SymfonyStyle($input, $output);
-        $this->askForArrayType($io);
-
-        if ($this->_arrayDefinition->isMap()) {
-            $this->askForKeyType($io);
-        }
-
-        $this->askForValueType($io);
+        $this->askForKey($io);
+        $this->askForValue($io);
     }
 
-    private function askForArrayType(SymfonyStyle $io): void
-    {
-        $question = new Question\ChoiceQuestion(
-            'Strict array type',
-            Enum\ArrayTypes::VALUES
-        );
-        $type = $io->askQuestion($question);
-        $this->_arrayDefinition->setArrayType(Enum\ArrayTypes::$type());
-    }
-
-    private function askForKeyType(SymfonyStyle $io): void
+    private function askForKey(SymfonyStyle $io): void
     {
         $question = new Question\ChoiceQuestion(
             'Strict array key type',
-            Enum\KeyTypes::VALUES
+            \array_combine(
+                Enum\KeyType::VALUES,
+                [
+                    'vector - array<type>',
+                    'map    - array<key, type>'
+                ]
+            )
         );
         $type = $io->askQuestion($question);
-        $this->_arrayDefinition->setKeyType(Enum\KeyTypes::$type());
+        $this->_arrayDefinition->setKey(Enum\KeyType::$type());
     }
 
-    private function askForValueType(SymfonyStyle $io): void
+    private function askForValue(SymfonyStyle $io): void
     {
         $question = new Question\ChoiceQuestion(
             'Strict array value type',
-            Enum\ValueTypes::VALUES
+            Enum\ValueType::VALUES
         );
         $type = $io->askQuestion($question);
-        $this->_arrayDefinition->setValueType(Enum\ValueTypes::$type());
+        $this->_arrayDefinition->setValue(Enum\ValueType::$type());
 
         if ($this->_arrayDefinition->isObject()) {
             $className = $this->askForObject($io);
 
             if ($className) {
                 $alias = $this->askForAlias($io, $className);
-                $objectDefinition = new DTO\ObjectDefinition();
+                $objectDefinition = new ObjectDefinition();
                 $objectDefinition
                     ->setName($className)
                     ->setAlias($alias);
@@ -150,9 +186,23 @@ final class StrictArrayGenerator extends Command
         InputInterface $input,
         OutputInterface $output
     ): int {
-        $this->_arrayGenerator->generate($this->_arrayDefinition);
+        $arrayClass = $this->_arrayGenerator->generate($this->_arrayDefinition);
         $io = new SymfonyStyle($input, $output);
-        $io->note("Strict array generated: {$this->_arrayDefinition}");
+        $io->success(
+            "Strict array generated: {$this->_arrayDefinition->getHumanName()}"
+        );
+
+        $directory = $input->getArgument('directory');
+
+        if ($directory) {
+            $directory = \rtrim($directory, '/');
+            $arrayComputerName = $this->_arrayDefinition->getComputerName();
+            $file = "{$directory}/{$arrayComputerName}.php";
+            $this->_fileSystem->put($file, $arrayClass);
+            $io->note("Run: \$a = new \\{$arrayComputerName}();");
+        } else {
+            $io->text($arrayClass);
+        }
 
         return 0;
     }

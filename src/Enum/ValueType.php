@@ -6,16 +6,16 @@ namespace eXtalion\PhpStrictArray\Enum;
 /**
  * @author Damian Glinkowski <damian@d0niek.pl>
  *
- * @method static ValueTypes int()
- * @method static ValueTypes float()
- * @method static ValueTypes string()
- * @method static ValueTypes bool()
- * @method static ValueTypes array()
- * @method static ValueTypes object()
- * @method static ValueTypes callable()
- * @method static ValueTypes iterable()
+ * @method static ValueType int()
+ * @method static ValueType float()
+ * @method static ValueType string()
+ * @method static ValueType bool()
+ * @method static ValueType array()
+ * @method static ValueType object()
+ * @method static ValueType callable()
+ * @method static ValueType iterable()
  */
-final class ValueTypes extends \Enum
+final class ValueType extends \Enum
 {
     const VALUES = [
         'int' => 'int',

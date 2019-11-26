@@ -1,0 +1,40 @@
+#!/usr/bin/env php
+<?php
+declare(strict_types=1);
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use eXtalion\PhpStrictArray\DTO\ArrayDefinition;
+use eXtalion\PhpStrictArray\Enum\KeyType;
+use eXtalion\PhpStrictArray\Enum\ValueType;
+use eXtalion\PhpStrictArray\Service\FileSystem;
+use eXtalion\PhpStrictArray\Service\StrictArrayGenerator;
+use eXtalion\PhpStrictArray\Template;
+
+$directory = $args[1] ?? 'arrays';
+
+$arrayGenerator = new StrictArrayGenerator(
+    new Template\Twig(
+        new \Twig\Environment(
+            new \Twig\Loader\FilesystemLoader(__DIR__ . '/../templates'),
+            []
+        )
+    )
+);
+$fileSystem = new FileSystem();
+$arrayDefinition = new ArrayDefinition();
+
+foreach (KeyType::VALUES as $key) {
+    $arrayDefinition->setKey(KeyType::$key());
+
+    foreach (ValueType::VALUES as $value) {
+        $arrayDefinition->setValue(ValueType::$value());
+
+        $arrayClass = $arrayGenerator->generate($arrayDefinition);
+
+        $fileSystem->put(
+            "{$directory}/{$arrayDefinition->getComputerName()}.php",
+            $arrayClass
+        );
+    }
+}
