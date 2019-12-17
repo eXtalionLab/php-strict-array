@@ -63,14 +63,50 @@ final class StrictArrayNameTest extends TestCase
                 ->setKey(KeyType::int())
                 ->setValue(ValueType::object())
                 ->setObjectDefinition($objectDefinition),
-            'array<\Foo\Bar>'
+            'array<Foo\Bar>'
         ];
         $arrayDefinition['map string and user\'s object'] = [
             (new ArrayDefinition)
                 ->setKey(KeyType::string())
                 ->setValue(ValueType::object())
                 ->setObjectDefinition($objectDefinition),
-            'array<string, \Foo\Bar>'
+            'array<string, Foo\Bar>'
+        ];
+
+        $objectDefinition = (new ObjectDefinition)
+            ->setName('array_int_');
+
+        $arrayDefinition['vector vector'] = [
+            (new ArrayDefinition)
+                ->setKey(KeyType::int())
+                ->setValue(ValueType::object())
+                ->setObjectDefinition($objectDefinition),
+            'array<array<int>>'
+        ];
+        $arrayDefinition['map string and vector'] = [
+            (new ArrayDefinition)
+                ->setKey(KeyType::string())
+                ->setValue(ValueType::object())
+                ->setObjectDefinition($objectDefinition),
+            'array<string, array<int>>'
+        ];
+
+        $objectDefinition = (new ObjectDefinition)
+            ->setName('array_string_and_object_');
+
+        $arrayDefinition['vector map'] = [
+            (new ArrayDefinition)
+                ->setKey(KeyType::int())
+                ->setValue(ValueType::object())
+                ->setObjectDefinition($objectDefinition),
+            'array<array<string, object>>'
+        ];
+        $arrayDefinition['map string and map'] = [
+            (new ArrayDefinition)
+                ->setKey(KeyType::string())
+                ->setValue(ValueType::object())
+                ->setObjectDefinition($objectDefinition),
+            'array<string, array<string, object>>'
         ];
 
         return $arrayDefinition;
@@ -127,6 +163,42 @@ final class StrictArrayNameTest extends TestCase
                 ->setValue(ValueType::object())
                 ->setObjectDefinition($objectDefinition),
             'array_string_and_Bar_'
+        ];
+
+        $objectDefinition = (new ObjectDefinition)
+            ->setAlias('array_int_');
+
+        $arrayDefinition['vector vector'] = [
+            (new ArrayDefinition)
+                ->setKey(KeyType::int())
+                ->setValue(ValueType::object())
+                ->setObjectDefinition($objectDefinition),
+            'array_array_int__'
+        ];
+        $arrayDefinition['map string and vector'] = [
+            (new ArrayDefinition)
+                ->setKey(KeyType::string())
+                ->setValue(ValueType::object())
+                ->setObjectDefinition($objectDefinition),
+            'array_string_and_array_int__'
+        ];
+
+        $objectDefinition = (new ObjectDefinition)
+            ->setAlias('array_string_and_object_');
+
+        $arrayDefinition['vector map'] = [
+            (new ArrayDefinition)
+                ->setKey(KeyType::int())
+                ->setValue(ValueType::object())
+                ->setObjectDefinition($objectDefinition),
+            'array_array_string_and_object__'
+        ];
+        $arrayDefinition['map string and map'] = [
+            (new ArrayDefinition)
+                ->setKey(KeyType::string())
+                ->setValue(ValueType::object())
+                ->setObjectDefinition($objectDefinition),
+            'array_string_and_array_string_and_object__'
         ];
 
         return $arrayDefinition;

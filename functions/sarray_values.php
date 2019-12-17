@@ -14,7 +14,7 @@ declare(strict_types=1);
 function sarray_values($array): array
 {
     if (\is_array($array)) {
-        return $array;
+        return \array_values($array);
     }
 
     if ($array instanceof \StrictArray) {
@@ -27,11 +27,5 @@ function sarray_values($array): array
         return $values;
     }
 
-    throw new \TypeError(
-        \sprintf(
-            '%s() expects parameter 1 to be (strict) array, %s given',
-            __FUNCTION__,
-            \gettype($array)
-        )
-    );
+    \throw_type_error(__FUNCTION__, 1, $array);
 }

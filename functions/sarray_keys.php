@@ -40,11 +40,5 @@ function sarray_keys($array, $search_value = null): array
         return $keys;
     }
 
-    throw new \TypeError(
-        \sprintf(
-            '%s() expects parameter 2 to be (strict) array, %s given',
-            __FUNCTION__,
-            \gettype($array)
-        )
-    );
+    \throw_type_error(__FUNCTION__, 2, $array);
 }

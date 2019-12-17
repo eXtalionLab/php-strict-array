@@ -10,7 +10,7 @@ final class SArraySearchTest extends TestCase
     public function testArraySearch(): void
     {
         $array = [1, 2, 5, 10];
-        $strictArray = new \array_int(...$array);
+        $strictArray = new \array_int_(...$array);
 
         $searchCore = \array_search(5, $array);
         $search = \sarray_search(5, $array);

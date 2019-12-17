@@ -11,11 +11,11 @@ declare(strict_types=1);
 
 
     
-final class array_iterable implements \StrictArray
+final class array_int_ implements \StrictArray
 {
     private $data;
 
-            public function __construct(iterable ...$data)
+            public function __construct(int ...$data)
         {
             $this->data = $data;
         }
@@ -45,7 +45,7 @@ final class array_iterable implements \StrictArray
                     return isset($this->data[$offset]);
             }
 
-    public function offsetGet($offset): ?iterable
+    public function offsetGet($offset): ?int
     {
         
             try {
@@ -75,7 +75,7 @@ final class array_iterable implements \StrictArray
                     if ($offset === null) {
                 
             try {
-                (function (iterable ...$v){})($value);
+                (function (int ...$v){})($value);
             } catch (\TypeError $ex) {
                 $message = \preg_replace(
                     '/Argument/',
@@ -116,7 +116,7 @@ final class array_iterable implements \StrictArray
         
                 
             try {
-                (function (iterable ...$v){})($value);
+                (function (int ...$v){})($value);
             } catch (\TypeError $ex) {
                 $message = \preg_replace(
                     '/Argument/',
@@ -168,7 +168,7 @@ final class array_iterable implements \StrictArray
         return \count($this->data);
     }
 
-    public function current(): ?iterable
+    public function current(): ?int
     {
                     return $this->valid() ? \current($this->data) : null;
             }
@@ -187,8 +187,8 @@ final class array_iterable implements \StrictArray
     {
         \reset($this->data);
     }
-    public function valid(): bool
 
+    public function valid(): bool
     {
         return \key($this->data) !== null;
     }

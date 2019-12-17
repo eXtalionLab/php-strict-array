@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 
     
-final class array_string_and_array implements \StrictArray
+final class array_string_and_bool_ implements \StrictArray
 {
     private $data;
 
@@ -50,7 +50,7 @@ final class array_string_and_array implements \StrictArray
         
             
             try {
-                (function (array ...$v){})(...\array_values($values));
+                (function (bool ...$v){})(...\array_values($values));
             } catch (\TypeError $ex) {
                 $message = \preg_replace(
                     '/Argument/',
@@ -96,7 +96,7 @@ final class array_string_and_array implements \StrictArray
                     return isset($this->data[$this->hash($offset)]);
             }
 
-    public function offsetGet($offset): ?array
+    public function offsetGet($offset): ?bool
     {
         
             try {
@@ -152,7 +152,7 @@ final class array_string_and_array implements \StrictArray
         
                     
             try {
-                (function (array ...$v){})($value->second());
+                (function (bool ...$v){})($value->second());
             } catch (\TypeError $ex) {
                 $message = \preg_replace(
                     '/Argument/',
@@ -203,7 +203,7 @@ final class array_string_and_array implements \StrictArray
         
                 
             try {
-                (function (array ...$v){})($value);
+                (function (bool ...$v){})($value);
             } catch (\TypeError $ex) {
                 $message = \preg_replace(
                     '/Argument/',
@@ -255,7 +255,7 @@ final class array_string_and_array implements \StrictArray
         return \count($this->data);
     }
 
-    public function current(): ?array
+    public function current(): ?bool
     {
                     return $this->valid() ? \current($this->data)->second() : null;
             }
@@ -274,8 +274,8 @@ final class array_string_and_array implements \StrictArray
     {
         \reset($this->data);
     }
-    public function valid(): bool
 
+    public function valid(): bool
     {
         return \key($this->data) !== null;
     }
@@ -292,6 +292,6 @@ final class array_string_and_array implements \StrictArray
 
             private function hash($key): string
         {
-            return \md5(var_export($key, true));
+            return \md5(\var_export($key, true));
         }
     }

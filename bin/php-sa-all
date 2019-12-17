@@ -9,16 +9,19 @@ use eXtalion\PhpStrictArray\Enum\KeyType;
 use eXtalion\PhpStrictArray\Enum\ValueType;
 use eXtalion\PhpStrictArray\Service\FileSystem;
 use eXtalion\PhpStrictArray\Service\StrictArrayGenerator;
+use eXtalion\PhpStrictArray\Service\StrictArrayName;
 use eXtalion\PhpStrictArray\Template;
 
 $directory = $args[1] ?? 'arrays';
 
+$arrayName = new StrictArrayName();
 $arrayGenerator = new StrictArrayGenerator(
     new Template\Twig(
         new \Twig\Environment(
             new \Twig\Loader\FilesystemLoader(__DIR__ . '/../templates'),
             []
-        )
+        ),
+        $arrayName
     )
 );
 $fileSystem = new FileSystem();
@@ -33,7 +36,7 @@ foreach (KeyType::VALUES as $key) {
         $arrayClass = $arrayGenerator->generate($arrayDefinition);
 
         $fileSystem->put(
-            "{$directory}/{$arrayDefinition->getComputerName()}.php",
+            "{$directory}/{$arrayName->forComputer($arrayDefinition)}.php",
             $arrayClass
         );
     }

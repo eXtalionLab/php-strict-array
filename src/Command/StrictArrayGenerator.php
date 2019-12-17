@@ -8,6 +8,7 @@ use eXtalion\PhpStrictArray\DTO\ObjectDefinition;
 use eXtalion\PhpStrictArray\Enum;
 use eXtalion\PhpStrictArray\Service\FileSystem;
 use eXtalion\PhpStrictArray\Service\StrictArrayGenerator as StrictArrayGeneratorService;
+use eXtalion\PhpStrictArray\Service\StrictArrayName;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -26,6 +27,11 @@ final class StrictArrayGenerator extends Command
     private $_arrayGenerator;
 
     /**
+     * @var \eXtalion\PhpStrictArray\Service\StrictArrayName
+     */
+    private $_arrayName;
+
+    /**
      * @var \eXtalion\PhpStrictArray\Service\FileSystem
      */
     private $_fileSystem;
@@ -37,15 +43,18 @@ final class StrictArrayGenerator extends Command
 
     /**
      * @param \eXtalion\PhpStrictArray\Service\StrictArrayGenerator $arrayGenerator
+     * @param \eXtalion\PhpStrictArray\Service\StrictArrayName $arrayName
      * @param \eXtalion\PhpStrictArray\Service\FileSystem $fileSystem
      */
     public function __construct(
         StrictArrayGeneratorService $arrayGenerator,
+        StrictArrayName $arrayName,
         FileSystem $fileSystem
     ) {
         parent::__construct();
 
         $this->_arrayGenerator = $arrayGenerator;
+        $this->_arrayName = $arrayName;
         $this->_fileSystem = $fileSystem;
         $this->_arrayDefinition = new ArrayDefinition();
     }
@@ -125,7 +134,7 @@ final class StrictArrayGenerator extends Command
         $type = $io->askQuestion($question);
         $this->_arrayDefinition->setValue(Enum\ValueType::$type());
 
-        if ($this->_arrayDefinition->isObject()) {
+        if ($this->_arrayDefinition->getValue() === Enum\ValueType::object()) {
             $className = $this->askForObject($io);
 
             if ($className) {
@@ -188,16 +197,18 @@ final class StrictArrayGenerator extends Command
     ): int {
         $arrayClass = $this->_arrayGenerator->generate($this->_arrayDefinition);
         $io = new SymfonyStyle($input, $output);
-        $io->success(
-            "Strict array generated: {$this->_arrayDefinition->getHumanName()}"
-        );
+        $io->success(\sprintf(
+            'Strict array generated: %s',
+            $this->_arrayName->forHuman($this->_arrayDefinition)
+        ));
 
         $directory = $input->getArgument('directory');
 
         if ($directory) {
             $directory = \rtrim($directory, '/');
-            $arrayComputerName = $this->_arrayDefinition->getComputerName();
-            $file = "{$directory}/{$arrayComputerName}.php";
+            $arrayComputerName = $this->_arrayName
+                ->forComputer($this->_arrayDefinition);
+            $file = \sprintf('%s/%s.php', $directory, $arrayComputerName);
             $this->_fileSystem->put($file, $arrayClass);
             $io->note("Run: \$a = new \\{$arrayComputerName}();");
         } else {

@@ -26,11 +26,5 @@ function sarray_search($needle, $haystack)
         }
     }
 
-    throw new \TypeError(
-        \sprintf(
-            '%s() expects parameter 2 to be (strict) array, %s given',
-            __FUNCTION__,
-            \gettype($haystack)
-        )
-    );
+    \throw_type_error(__FUNCTION__, 2, $haystack);
 }

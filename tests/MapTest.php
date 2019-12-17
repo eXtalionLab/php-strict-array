@@ -9,7 +9,7 @@ final class MapTest extends TestCase
 {
     public function testEmptyConstruct(): void
     {
-        $array = new \array_string_and_int;
+        $array = new \array_string_and_int_;
 
         $this->assertInstanceOf(\StrictArray::class, $array);
         $this->assertFalse($array->valid());
@@ -19,26 +19,26 @@ final class MapTest extends TestCase
     {
         $this->expectException(\TypeError::class);
 
-        new \array_string_and_int(new \Pair('a', 1), ['b' => 2]);
+        new \array_string_and_int_(new \Pair('a', 1), ['b' => 2]);
     }
 
     public function testConstructWithWrongKeyTypeInitValue(): void
     {
         $this->expectException(\TypeError::class);
 
-        new \array_string_and_int(new \Pair('a', 1), new \Pair(2, 2));
+        new \array_string_and_int_(new \Pair('a', 1), new \Pair(2, 2));
     }
 
     public function testConstructWithWrongValueTypeInitValue(): void
     {
         $this->expectException(\TypeError::class);
 
-        new \array_string_and_int(new \Pair('a', 1), new \Pair('b', 'b'));
+        new \array_string_and_int_(new \Pair('a', 1), new \Pair('b', 'b'));
     }
 
     public function testConstructWithInitValue(): void
     {
-        $array = new \array_string_and_int(new \Pair('a', 1), new \Pair('b', 2));
+        $array = new \array_string_and_int_(new \Pair('a', 1), new \Pair('b', 2));
 
         $this->assertTrue($array->valid());
     }
@@ -47,14 +47,14 @@ final class MapTest extends TestCase
     {
         $this->expectException(\TypeError::class);
 
-        $array = new \array_string_and_int;
+        $array = new \array_string_and_int_;
 
         isset($array[1]);
     }
 
     public function testOffsetExists(): void
     {
-        $array = new \array_string_and_int(new \Pair('a', 1), new \Pair('b', 2));
+        $array = new \array_string_and_int_(new \Pair('a', 1), new \Pair('b', 2));
 
         $this->assertFalse(isset($array['f']));
         $this->assertTrue(isset($array['b']));
@@ -64,7 +64,7 @@ final class MapTest extends TestCase
     {
         $this->expectException(\TypeError::class);
 
-        $array = new \array_string_and_int;
+        $array = new \array_string_and_int_;
 
         $array[1];
     }
@@ -73,14 +73,14 @@ final class MapTest extends TestCase
     {
         $this->expectNotice();
 
-        $array = new \array_string_and_int;
+        $array = new \array_string_and_int_;
 
         $array['e'];
     }
 
     public function testOffsetGet(): void
     {
-        $array = new \array_string_and_int(new \Pair('a', 1), new \Pair('b', 2));
+        $array = new \array_string_and_int_(new \Pair('a', 1), new \Pair('b', 2));
 
         $this->assertSame(2, $array['b']);
         $this->assertNull(@$array['e']);
@@ -90,7 +90,7 @@ final class MapTest extends TestCase
     {
         $this->expectException(\TypeError::class);
 
-        $array = new \array_string_and_int;
+        $array = new \array_string_and_int_;
 
         $array[1] = 1;
     }
@@ -99,7 +99,7 @@ final class MapTest extends TestCase
     {
         $this->expectException(\TypeError::class);
 
-        $array = new \array_string_and_int;
+        $array = new \array_string_and_int_;
 
         $array['a'] = 'string';
     }
@@ -108,14 +108,14 @@ final class MapTest extends TestCase
     {
         $this->expectException(\TypeError::class);
 
-        $array = new \array_string_and_int;
+        $array = new \array_string_and_int_;
 
         $array[] = 1;
     }
 
     public function testOffsetSet(): void
     {
-        $array = new \array_string_and_int;
+        $array = new \array_string_and_int_;
 
         $array['f'] = 3;
 
@@ -124,7 +124,7 @@ final class MapTest extends TestCase
 
     public function testOffsetSetWithoutKey(): void
     {
-        $array = new \array_string_and_int;
+        $array = new \array_string_and_int_;
 
         $array[] = new \Pair('b', 3);
 
@@ -133,7 +133,7 @@ final class MapTest extends TestCase
 
     public function testCount(): void
     {
-        $array = new \array_string_and_int;
+        $array = new \array_string_and_int_;
 
         $this->assertCount(0, $array);
 
@@ -146,7 +146,7 @@ final class MapTest extends TestCase
     public function testIterateThroughArray(): void
     {
         $values = ['a' => 1, 'b' => 2];
-        $array = new \array_string_and_int(new \Pair('a', 1), new \Pair('b', 2));
+        $array = new \array_string_and_int_(new \Pair('a', 1), new \Pair('b', 2));
 
         foreach ($array as $index => $element) {
             $this->assertSame(

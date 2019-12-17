@@ -10,7 +10,7 @@ final class SArrayValues extends TestCase
     public function testArrayValues(): void
     {
         $array = [1, 2, 5, 10];
-        $strictArray = new \array_int(...$array);
+        $strictArray = new \array_int_(...$array);
 
         $valuesCoreArray = \array_values($array);
         $valuesArray = \sarray_values($array);

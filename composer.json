@@ -5,7 +5,7 @@
     "type": "library",
     "require": {
         "php": "^7.2",
-        "symfony/console": "^4.3",
+        "symfony/console": "^5.0",
         "twig/twig": "^2.12",
         "extalion/php-enum": "dev-master"
     },
@@ -29,15 +29,14 @@
             "functions/sarray_keys.php",
             "functions/sarray_search.php",
             "functions/sarray_values.php",
+            "functions/throw_type_error.php",
             "Pair.php",
             "StrictArray.php"
-        ],
-        "psr-4": {
-            "eXtalion\\PhpStrictArray\\": "src/"
-        }
+        ]
     },
     "autoload-dev": {
         "psr-4": {
+            "eXtalion\\PhpStrictArray\\": "src/",
             "eXtalion\\PhpStrictArray\\Tests\\": "tests/"
         }
     }

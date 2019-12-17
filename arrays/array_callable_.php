@@ -11,11 +11,11 @@ declare(strict_types=1);
 
 
     
-final class array_string implements \StrictArray
+final class array_callable_ implements \StrictArray
 {
     private $data;
 
-            public function __construct(string ...$data)
+            public function __construct(callable ...$data)
         {
             $this->data = $data;
         }
@@ -45,7 +45,7 @@ final class array_string implements \StrictArray
                     return isset($this->data[$offset]);
             }
 
-    public function offsetGet($offset): ?string
+    public function offsetGet($offset): ?callable
     {
         
             try {
@@ -75,7 +75,7 @@ final class array_string implements \StrictArray
                     if ($offset === null) {
                 
             try {
-                (function (string ...$v){})($value);
+                (function (callable ...$v){})($value);
             } catch (\TypeError $ex) {
                 $message = \preg_replace(
                     '/Argument/',
@@ -116,7 +116,7 @@ final class array_string implements \StrictArray
         
                 
             try {
-                (function (string ...$v){})($value);
+                (function (callable ...$v){})($value);
             } catch (\TypeError $ex) {
                 $message = \preg_replace(
                     '/Argument/',
@@ -168,7 +168,7 @@ final class array_string implements \StrictArray
         return \count($this->data);
     }
 
-    public function current(): ?string
+    public function current(): ?callable
     {
                     return $this->valid() ? \current($this->data) : null;
             }
@@ -187,8 +187,8 @@ final class array_string implements \StrictArray
     {
         \reset($this->data);
     }
-    public function valid(): bool
 
+    public function valid(): bool
     {
         return \key($this->data) !== null;
     }

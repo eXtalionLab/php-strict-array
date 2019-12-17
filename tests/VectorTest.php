@@ -9,7 +9,7 @@ final class VectorTest extends TestCase
 {
     public function testEmptyConstruct(): void
     {
-        $array = new \array_int;
+        $array = new \array_int_;
 
         $this->assertInstanceOf(\StrictArray::class, $array);
         $this->assertFalse($array->valid());
@@ -19,12 +19,12 @@ final class VectorTest extends TestCase
     {
         $this->expectException(\TypeError::class);
 
-        new \array_int(1, 'a');
+        new \array_int_(1, 'a');
     }
 
     public function testConstructWithInitValue(): void
     {
-        $array = new \array_int(1, 2);
+        $array = new \array_int_(1, 2);
 
         $this->assertTrue($array->valid());
     }
@@ -33,14 +33,14 @@ final class VectorTest extends TestCase
     {
         $this->expectException(\TypeError::class);
 
-        $array = new \array_int;
+        $array = new \array_int_;
 
         isset($array['b']);
     }
 
     public function testOffsetExists(): void
     {
-        $array = new \array_int(1, 2);
+        $array = new \array_int_(1, 2);
 
         $this->assertFalse(isset($array[5]));
         $this->assertTrue(isset($array[1]));
@@ -50,7 +50,7 @@ final class VectorTest extends TestCase
     {
         $this->expectException(\TypeError::class);
 
-        $array = new \array_int;
+        $array = new \array_int_;
 
         $array['b'];
     }
@@ -59,14 +59,14 @@ final class VectorTest extends TestCase
     {
         $this->expectNotice();
 
-        $array = new \array_int;
+        $array = new \array_int_;
 
         $array[4];
     }
 
     public function testOffsetGet(): void
     {
-        $array = new \array_int(1, 2);
+        $array = new \array_int_(1, 2);
 
         $this->assertSame(2, $array[1]);
         $this->assertNull(@$array[4]);
@@ -76,7 +76,7 @@ final class VectorTest extends TestCase
     {
         $this->expectException(\TypeError::class);
 
-        $array = new \array_int;
+        $array = new \array_int_;
 
         $array['b'] = 1;
     }
@@ -85,7 +85,7 @@ final class VectorTest extends TestCase
     {
         $this->expectException(\TypeError::class);
 
-        $array = new \array_int;
+        $array = new \array_int_;
 
         $array[0] = 'string';
     }
@@ -94,14 +94,14 @@ final class VectorTest extends TestCase
     {
         $this->expectException(\TypeError::class);
 
-        $array = new \array_int;
+        $array = new \array_int_;
 
         $array[] = 'string';
     }
 
     public function testOffsetSet(): void
     {
-        $array = new \array_int;
+        $array = new \array_int_;
 
         $array[5] = 3;
 
@@ -110,7 +110,7 @@ final class VectorTest extends TestCase
 
     public function testOffsetSetWithoutKey(): void
     {
-        $array = new \array_int(2);
+        $array = new \array_int_(2);
 
         $array[] = 3;
 
@@ -119,7 +119,7 @@ final class VectorTest extends TestCase
 
     public function testCount(): void
     {
-        $array = new \array_int;
+        $array = new \array_int_;
 
         $this->assertCount(0, $array);
 
@@ -132,7 +132,7 @@ final class VectorTest extends TestCase
     public function testIterateThroughArray(): void
     {
         $values = [1, 2];
-        $array = new \array_int(...$values);
+        $array = new \array_int_(...$values);
 
         foreach ($array as $index => $element) {
             $this->assertSame(

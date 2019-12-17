@@ -7,6 +7,7 @@ use eXtalion\PhpStrictArray\Enum;
 use eXtalion\PhpStrictArray\DTO\ObjectDefinition;
 use eXtalion\PhpStrictArray\DTO\ArrayDefinition;
 use eXtalion\PhpStrictArray\Service\StrictArrayGenerator;
+use eXtalion\PhpStrictArray\Service\StrictArrayName;
 use eXtalion\PhpStrictArray\Template;
 use PHPUnit\Framework\TestCase;
 
@@ -23,7 +24,8 @@ final class StrictArrayGeneratorTest extends TestCase
                 'debug' => false
             ]
         );
-        $template = new Template\Twig($twig);
+        $this->arrayName = new StrictArrayName();
+        $template = new Template\Twig($twig, $this->arrayName);
 
         $this->service = new StrictArrayGenerator($template);
     }
@@ -59,7 +61,7 @@ final class StrictArrayGeneratorTest extends TestCase
         ArrayDefinition $arrayDefinition
     ): void {
         $strictArray = $this->service->generate($arrayDefinition);
-        $className = $arrayDefinition->getComputerName();
+        $className = $this->arrayName->forComputer($arrayDefinition);
 
         $this->assertStringContainsString(
             "final class {$className}",

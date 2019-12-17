@@ -7,18 +7,22 @@ require_once __DIR__ . '/../vendor/autoload.php';
 use eXtalion\PhpStrictArray\Command\StrictArrayGenerator as SAG_Command;
 use eXtalion\PhpStrictArray\Service\FileSystem;
 use eXtalion\PhpStrictArray\Service\StrictArrayGenerator as SAG_Service;
+use eXtalion\PhpStrictArray\Service\StrictArrayName;
 use eXtalion\PhpStrictArray\Template;
 use Symfony\Component\Console\Application;
 
+$arrayName = new StrictArrayName();
 $command = new SAG_Command(
     new SAG_Service(
         new Template\Twig(
             new \Twig\Environment(
                 new \Twig\Loader\FilesystemLoader(__DIR__ . '/../templates'),
                 []
-            )
+            ),
+            $arrayName
         )
     ),
+    $arrayName,
     new FileSystem()
 );
 

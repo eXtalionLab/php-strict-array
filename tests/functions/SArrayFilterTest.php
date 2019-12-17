@@ -10,7 +10,7 @@ final class SArrayFilterTest extends TestCase
     public function testArrayFilter(): void
     {
         $array = [1, 2, 5, 10];
-        $strictArray = new \array_int(...$array);
+        $strictArray = new \array_int_(...$array);
 
         $callback = function ($value) {
             return $value % 2;
@@ -33,7 +33,7 @@ final class SArrayFilterTest extends TestCase
     public function testArrayFilterByKey(): void
     {
         $array = [1, 2, 5, 10];
-        $strictArray = new \array_int(...$array);
+        $strictArray = new \array_int_(...$array);
 
         $callback = function ($key) {
             return $key % 2;
@@ -56,7 +56,7 @@ final class SArrayFilterTest extends TestCase
     public function testArrayFilterByBoth(): void
     {
         $array = [1, 2, 5, 10];
-        $strictArray = new \array_int(...$array);
+        $strictArray = new \array_int_(...$array);
 
         $callback = function ($value, $key) {
             return $value === 2 || $key === 2;

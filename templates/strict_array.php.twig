@@ -19,7 +19,7 @@ declare(strict_types=1);
     {% set value = array.value %}
 {% endif %}
 
-final class {{ array.computerName }} implements \StrictArray
+final class {{ name_for_computer(array) }} implements \StrictArray
 {
     private $data;
 

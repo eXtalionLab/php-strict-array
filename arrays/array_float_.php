@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 
     
-final class array_float implements \StrictArray
+final class array_float_ implements \StrictArray
 {
     private $data;
 
@@ -187,8 +187,8 @@ final class array_float implements \StrictArray
     {
         \reset($this->data);
     }
-    public function valid(): bool
 
+    public function valid(): bool
     {
         return \key($this->data) !== null;
     }

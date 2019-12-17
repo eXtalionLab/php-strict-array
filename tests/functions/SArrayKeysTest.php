@@ -10,7 +10,7 @@ final class SArrayKeys extends TestCase
     public function testArrayKeys(): void
     {
         $array = [1, 2, 5, 10];
-        $strictArray = new \array_int(...$array);
+        $strictArray = new \array_int_(...$array);
 
         $keysCoreArray = \array_keys($array);
         $keysArray = \sarray_keys($array);
@@ -29,7 +29,7 @@ final class SArrayKeys extends TestCase
     public function testArrayKeysWithSearchValues(): void
     {
         $array = [1, 2, 5, 10];
-        $strictArray = new \array_int(...$array);
+        $strictArray = new \array_int_(...$array);
 
         $keysCoreArray = \array_keys($array, 5);
         $keysArray = \sarray_keys($array, 5);

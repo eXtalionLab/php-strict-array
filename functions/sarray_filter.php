@@ -46,11 +46,5 @@ function sarray_filter($array, callable $callback = null, int $flag = 0)
         return $filterArray;
     }
 
-    throw new \TypeError(
-        \sprintf(
-            '%s() expects parameter 1 to be (strict) array, %s given',
-            __FUNCTION__,
-            \gettype($array)
-        )
-    );
+    \throw_type_error(__FUNCTION__, 1, $array);
 }

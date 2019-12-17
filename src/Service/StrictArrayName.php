@@ -26,9 +26,16 @@ class StrictArrayName
         $key = $arrayDefinition->isMap()
             ? "{$arrayDefinition->getKey()}, "
             : '';
-        $type = $arrayDefinition->isObject()
-            ? "\\{$arrayDefinition->getObjectDefinition()->getName()}"
-            : $arrayDefinition->getValue();
+
+        if ($arrayDefinition->isObject()) {
+            $type = \str_replace(
+                ['array_', '_and_', '_'],
+                ['array<', ', ', '>'],
+                $arrayDefinition->getObjectDefinition()->getName()
+            );
+        } else {
+            $type = $arrayDefinition->getValue();
+        }
 
         return \sprintf('array<%s%s>', $key, $type);
     }

@@ -11,20 +11,71 @@ declare(strict_types=1);
 
 
     
-final class array_object implements \StrictArray
+final class array_string_and_int_ implements \StrictArray
 {
     private $data;
 
-            public function __construct(object ...$data)
+            public function __construct(\Pair ...$data)
         {
-            $this->data = $data;
+            $keys = [];
+            $values = [];
+            $uniqueData = [];
+
+            foreach ($data as $pair) {
+                $key = $this->hash($pair->first());
+
+                $uniqueData[$key] = $pair;
+                $keys[$key] = $pair->first();
+                $values[$key] = $pair->second();
+            }
+
+            
+            try {
+                (function (string ...$v){})(...\array_values($keys));
+            } catch (\TypeError $ex) {
+                $message = \preg_replace(
+                    '/Argument/',
+                    'Key',
+                    $ex->getMessage(),
+                    1
+                );
+                $message = \preg_replace(
+                    '/\w+::{\w+}/',
+                    __METHOD__,
+                    $message
+                );
+
+                throw new \TypeError($message);
+            }
+        
+            
+            try {
+                (function (int ...$v){})(...\array_values($values));
+            } catch (\TypeError $ex) {
+                $message = \preg_replace(
+                    '/Argument/',
+                    'Value',
+                    $ex->getMessage(),
+                    1
+                );
+                $message = \preg_replace(
+                    '/\w+::{\w+}/',
+                    __METHOD__,
+                    $message
+                );
+
+                throw new \TypeError($message);
+            }
+        
+
+            $this->data = $uniqueData;
         }
     
     public function offsetExists($offset): bool
     {
         
             try {
-                (function (int ...$v){})($offset);
+                (function (string ...$v){})($offset);
             } catch (\TypeError $ex) {
                 $message = \preg_replace(
                     '/Argument/',
@@ -42,14 +93,14 @@ final class array_object implements \StrictArray
             }
         
 
-                    return isset($this->data[$offset]);
+                    return isset($this->data[$this->hash($offset)]);
             }
 
-    public function offsetGet($offset): ?object
+    public function offsetGet($offset): ?int
     {
         
             try {
-                (function (int ...$v){})($offset);
+                (function (string ...$v){})($offset);
             } catch (\TypeError $ex) {
                 $message = \preg_replace(
                     '/Argument/',
@@ -67,15 +118,41 @@ final class array_object implements \StrictArray
             }
         
 
-                    return $this->data[$offset];
+                    $key = $this->hash($offset);
+
+            if ($this->data[$key]) {
+                return $this->data[$key]->second();
+            }
+
+            return null;
             }
 
     public function offsetSet($offset, $value): void
     {
                     if ($offset === null) {
-                
+                if ($value instanceof \Pair) {
+                    
             try {
-                (function (object ...$v){})($value);
+                (function (string ...$v){})($value->first());
+            } catch (\TypeError $ex) {
+                $message = \preg_replace(
+                    '/Argument/',
+                    'Key',
+                    $ex->getMessage(),
+                    1
+                );
+                $message = \preg_replace(
+                    '/\w+::{\w+}/',
+                    __METHOD__,
+                    $message
+                );
+
+                throw new \TypeError($message);
+            }
+        
+                    
+            try {
+                (function (int ...$v){})($value->second());
             } catch (\TypeError $ex) {
                 $message = \preg_replace(
                     '/Argument/',
@@ -93,11 +170,21 @@ final class array_object implements \StrictArray
             }
         
 
-                $this->data[] = $value;
+                    $this->data[$this->hash($value->first())] = $value;
+
+                    return;
+                }
+
+                throw new \TypeError(\sprintf(
+                    'Argument 2 passed to %s must be an instance of %s, %s given',
+                    __METHOD__,
+                    \Paid::class,
+                    \gettype($value)
+                ));
             } else {
                 
             try {
-                (function (int ...$v){})($offset);
+                (function (string ...$v){})($offset);
             } catch (\TypeError $ex) {
                 $message = \preg_replace(
                     '/Argument/',
@@ -116,7 +203,7 @@ final class array_object implements \StrictArray
         
                 
             try {
-                (function (object ...$v){})($value);
+                (function (int ...$v){})($value);
             } catch (\TypeError $ex) {
                 $message = \preg_replace(
                     '/Argument/',
@@ -134,7 +221,7 @@ final class array_object implements \StrictArray
             }
         
 
-                $this->data[$offset] = $value;
+                $this->data[$this->hash($offset)] = new \Pair($offset, $value);
             }
             }
 
@@ -142,7 +229,7 @@ final class array_object implements \StrictArray
     {
         
             try {
-                (function (int ...$v){})($offset);
+                (function (string ...$v){})($offset);
             } catch (\TypeError $ex) {
                 $message = \preg_replace(
                     '/Argument/',
@@ -160,7 +247,7 @@ final class array_object implements \StrictArray
             }
         
 
-                    unset($this->data[$offset]);
+                    unset($this->data[$this->hash($offset)]);
             }
 
     public function count(): int
@@ -168,14 +255,14 @@ final class array_object implements \StrictArray
         return \count($this->data);
     }
 
-    public function current(): ?object
+    public function current(): ?int
     {
-                    return $this->valid() ? \current($this->data) : null;
+                    return $this->valid() ? \current($this->data)->second() : null;
             }
 
-    public function key(): ?int
+    public function key(): ?string
     {
-                    return \key($this->data);
+                    return $this->valid() ? \current($this->data)->first() : null;
             }
 
     public function next(): void
@@ -187,20 +274,24 @@ final class array_object implements \StrictArray
     {
         \reset($this->data);
     }
-    public function valid(): bool
 
+    public function valid(): bool
     {
         return \key($this->data) !== null;
     }
 
     public function jsonSerialize(): array
     {
-                    return $this->data;
+                    return \array_values($this->data);
             }
 
     public function __debugInfo(): array
     {
-                    return $this->data;
+                    return \array_values($this->data);
             }
 
+            private function hash($key): string
+        {
+            return \md5(\var_export($key, true));
+        }
     }

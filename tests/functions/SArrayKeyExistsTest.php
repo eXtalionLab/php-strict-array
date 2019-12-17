@@ -10,7 +10,7 @@ final class SArrayKeyExistsTest extends TestCase
     public function testArrayKeyExists(): void
     {
         $array = [1, 2, 5, 10];
-        $strictArray = new \array_int(...$array);
+        $strictArray = new \array_int_(...$array);
 
         $this->assertTrue(\array_key_exists(2, $array));
         $this->assertTrue(\sarray_key_exists(2, $array));
@@ -20,7 +20,7 @@ final class SArrayKeyExistsTest extends TestCase
     public function testArrayKeyNotExists(): void
     {
         $array = [1, 2, 5, 10];
-        $strictArray = new \array_int(...$array);
+        $strictArray = new \array_int_(...$array);
 
         $this->assertFalse(\array_key_exists(8, $array));
         $this->assertFalse(\sarray_key_exists(8, $array));
