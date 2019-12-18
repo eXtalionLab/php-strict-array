@@ -3,15 +3,6 @@
     "description": "Generator for generic arrays (vector, map)",
     "keywords": ["array", "vector", "map", "collections", "strict", "strict-types"],
     "type": "library",
-    "require": {
-        "php": "^7.2",
-        "symfony/console": "^5.0",
-        "twig/twig": "^2.12",
-        "extalion/php-enum": "dev-master"
-    },
-    "require-dev": {
-        "phpunit/phpunit": "^8.4"
-    },
     "license": "MIT",
     "authors": [
         {
@@ -39,5 +30,22 @@
             "eXtalion\\PhpStrictArray\\": "src/",
             "eXtalion\\PhpStrictArray\\Tests\\": "tests/"
         }
-    }
+    },
+    "require": {
+        "php": "^7.2"
+    },
+    "require-dev": {
+        "extalion/php-enum": "0.1.x-dev",
+        "phpunit/phpunit": "^8.4",
+        "symfony/console": "^5.0",
+        "twig/twig": "^2.12"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.1-dev"
+        }
+    },
+    "bin": [
+        "bin/php-sa"
+    ]
 }

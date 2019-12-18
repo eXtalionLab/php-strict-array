@@ -197,10 +197,12 @@ final class StrictArrayGenerator extends Command
     ): int {
         $arrayClass = $this->_arrayGenerator->generate($this->_arrayDefinition);
         $io = new SymfonyStyle($input, $output);
-        $io->success(\sprintf(
-            'Strict array generated: %s',
-            $this->_arrayName->forHuman($this->_arrayDefinition)
-        ));
+        $io->success(
+            \sprintf(
+                'Strict array generated: %s',
+                $this->_arrayName->forHuman($this->_arrayDefinition)
+            )
+        );
 
         $directory = $input->getArgument('directory');
 

@@ -32,9 +32,7 @@ foreach (KeyType::VALUES as $key) {
 
     foreach (ValueType::VALUES as $value) {
         $arrayDefinition->setValue(ValueType::$value());
-
         $arrayClass = $arrayGenerator->generate($arrayDefinition);
-
         $fileSystem->put(
             "{$directory}/{$arrayName->forComputer($arrayDefinition)}.php",
             $arrayClass
